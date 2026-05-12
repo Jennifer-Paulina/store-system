@@ -1,0 +1,34 @@
+:root {
+  --primary: #084F8C;
+  --primary-dark: #063A6A;
+  --primary-light: #3C74A6;
+  --secondary: #C4CFE8;
+  --accent: #D7E3FF;
+  --success: #107C10;
+  --success-light: #DFF6DD;
+  --warning: #FFB900;
+  --warning-light: #FFF4CE;
+  --danger: #D13438;
+  --danger-light: #FDE7E9;
+  --text-primary: #201F1E;
+  --text-secondary: #605E5C;
+  --background: #FAF9FD;
+  --surface: #FFFFFF;
+  --border: #C4CFE8;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: var(--background);
+  color: var(--text-primary);
+}
+
+html, body {
+  height: 100%;
+}

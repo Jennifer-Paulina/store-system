@@ -1,0 +1,170 @@
+.dashboard-container {
+  padding: 8px 0;
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.page-subtitle {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+.metric-card {
+  border-radius: 12px !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+}
+
+.metric-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.metric-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.metric-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.metric-value {
+  font-size: 32px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.metric-sub {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.metric-icon-container {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.metric-icon-container mat-icon {
+  font-size: 28px;
+  width: 28px;
+  height: 28px;
+}
+
+.metric-icon-container.blue {
+  background-color: var(--accent);
+  color: var(--primary);
+}
+
+.metric-icon-container.green {
+  background-color: var(--success-light);
+  color: var(--success);
+}
+
+.metric-icon-container.warning {
+  background-color: var(--warning-light);
+  color: var(--warning-dark, #F57F17);
+}
+
+.metric-icon-container.danger {
+  background-color: var(--danger-light);
+  color: var(--danger);
+}
+
+.welcome-header {
+  margin-bottom: 24px;
+}
+
+.status-card {
+  border-radius: 12px !important;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+}
+
+.status-card.pending {
+  border-left: 4px solid var(--warning);
+}
+
+.status-card.inactive {
+  border-left: 4px solid var(--danger);
+}
+
+.status-card.warning {
+  border-left: 4px solid var(--warning);
+}
+
+.status-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 0;
+}
+
+.status-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+}
+
+.status-card.pending .status-icon {
+  color: var(--warning);
+}
+
+.status-card.inactive .status-icon {
+  color: var(--danger);
+}
+
+.status-card.warning .status-icon {
+  color: var(--warning);
+}
+
+.status-info h2 {
+  font-size: 18px;
+  font-weight: 500;
+  margin: 0 0 4px;
+  color: var(--text-primary);
+}
+
+.status-info p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0 0 12px;
+}
+
+.customer-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.metric-card {
+  cursor: pointer;
+}

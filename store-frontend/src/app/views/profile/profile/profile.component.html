@@ -1,0 +1,125 @@
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Mi Perfil</h1>
+      <p class="page-subtitle">Gestiona tu información personal</p>
+    </div>
+  </div>
+  @if (customer && (!customer.phone || !customer.address)) {
+    <div class="profile-warning">
+      <mat-icon>warning</mat-icon>
+      <span>Completa tu teléfono y dirección para poder realizar pedidos.</span>
+    </div>
+  }
+
+  @if (loading) {
+    <div class="loading-container">
+      <mat-spinner diameter="48"></mat-spinner>
+    </div>
+  } @else if (customer) {
+    <div class="profile-grid">
+      <mat-card class="profile-card">
+        <mat-card-content>
+          <div class="profile-header">
+            <div class="profile-avatar">
+              <mat-icon>account_circle</mat-icon>
+            </div>
+            <div class="profile-info">
+              <h2>{{ customer.name }}</h2>
+              <p>{{ customer.email }}</p>
+              <span class="status-badge" [class]="getStatusClass(customer.status)">
+                {{ getStatusLabel(customer.status) }}
+              </span>
+            </div>
+          </div>
+
+          <mat-divider></mat-divider>
+
+          <div class="info-section">
+            <div class="info-row">
+              <mat-icon>phone</mat-icon>
+              <span>{{ customer.phone || 'No registrado' }}</span>
+            </div>
+            <div class="info-row">
+              <mat-icon>home</mat-icon>
+              <span>{{ customer.address || 'No registrada' }}</span>
+            </div>
+            <div class="info-row">
+              <mat-icon>calendar_today</mat-icon>
+              <span>Miembro desde {{ customer.createdAt | date:'dd/MM/yyyy' }}</span>
+            </div>
+          </div>
+
+          <div class="card-actions">
+            <button mat-raised-button color="primary" (click)="editingProfile = !editingProfile">
+              <mat-icon>edit</mat-icon>
+              Editar perfil
+            </button>
+            <button mat-button (click)="editingPassword = !editingPassword">
+              <mat-icon>lock</mat-icon>
+              Cambiar contraseña
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      @if (editingProfile) {
+        <mat-card class="form-card">
+          <mat-card-content>
+            <h3 class="form-title">Editar información</h3>
+            <form [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Nombre completo</mat-label>
+                <input matInput formControlName="name">
+                @if (profileForm.get('name')?.hasError('required') && profileForm.get('name')?.touched) {
+                  <mat-error>El nombre es requerido</mat-error>
+                }
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Teléfono</mat-label>
+                <input matInput formControlName="phone" placeholder="Tu teléfono">
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Dirección</mat-label>
+                <input matInput formControlName="address" placeholder="Tu dirección">
+              </mat-form-field>
+
+              <div class="form-actions">
+                <button mat-button type="button" (click)="editingProfile = false">Cancelar</button>
+                <button mat-raised-button color="primary" type="submit" [disabled]="profileForm.invalid">
+                  Guardar
+                </button>
+              </div>
+            </form>
+          </mat-card-content>
+        </mat-card>
+      }
+
+      @if (editingPassword) {
+        <mat-card class="form-card">
+          <mat-card-content>
+            <h3 class="form-title">Cambiar contraseña</h3>
+            <form [formGroup]="passwordForm" (ngSubmit)="savePassword()">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Nueva contraseña</mat-label>
+                <input matInput type="password" formControlName="newPassword">
+                @if (passwordForm.get('newPassword')?.hasError('minlength') && passwordForm.get('newPassword')?.touched) {
+                  <mat-error>Mínimo 6 caracteres</mat-error>
+                }
+              </mat-form-field>
+
+              <div class="form-actions">
+                <button mat-button type="button" (click)="editingPassword = false">Cancelar</button>
+                <button mat-raised-button color="primary" type="submit" [disabled]="passwordForm.invalid">
+                  Actualizar
+                </button>
+              </div>
+            </form>
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+  }
+</div>

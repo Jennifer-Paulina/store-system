@@ -1,0 +1,29 @@
+{
+  "moduleFileExtensions": ["js", "json", "ts"],
+  "rootDir": "..",
+  "testEnvironment": "node",
+  "testRegex": "./test/.*.e2e-spec.ts$",
+  "transform": {
+    "^.+\\.(t|j)s$": "ts-jest"
+  },
+  "collectCoverage": true,
+  "coverageDirectory": "./coverage",
+  "coverageReporters": ["text", "lcov"],
+  "collectCoverageFrom": [
+    "src/**/*.ts",
+    "!src/**/*.module.ts",
+    "!src/main.ts",
+    "!src/app.controller.ts",
+    "!src/app.controller.spec.ts",
+    "!src/app.service.ts",
+    "!src/**/*.dto.ts",
+    "!src/**/*.entity.ts",
+    "!src/**/*.interface.ts",
+    "!src/infrastructure/container/**",
+    "!src/shared/decorators/**",
+    "!src/shared/guards/**",
+    "!src/modules/orders/application/presenters/*.ts",
+    "!src/modules/products/application/presenters/*.ts",
+    "!src/modules/products/domain/exceptions/*.ts"
+  ]
+}

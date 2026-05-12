@@ -1,0 +1,119 @@
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Catálogo</h1>
+      <p class="page-subtitle">Explora nuestros productos disponibles</p>
+    </div>
+    <button mat-raised-button color="primary" (click)="toggleCart()" class="cart-btn">
+      <mat-icon [matBadge]="getTotalItems()" [matBadgeHidden]="getTotalItems() === 0" matBadgeColor="warn">
+        shopping_cart
+      </mat-icon>
+      Carrito — ${{ getTotalPrice() | number:'1.2-2' }}
+    </button>
+  </div>
+
+  @if (showCart && cart.length > 0) {
+    <div class="cart-card">
+      <h2 class="form-title">Tu carrito</h2>
+      <div class="cart-items">
+        @for (item of cart; track item.product.id) {
+          <div class="cart-item">
+            <span class="cart-item-name">{{ item.product.name }}</span>
+            <div class="cart-item-controls">
+              <button mat-icon-button (click)="removeFromCart(item.product)">
+                <mat-icon>remove</mat-icon>
+              </button>
+              <span class="cart-quantity">{{ item.quantity }}</span>
+              <button mat-icon-button (click)="addToCart(item.product)">
+                <mat-icon>add</mat-icon>
+              </button>
+            </div>
+            <span class="cart-item-price">${{ item.product.price * item.quantity | number:'1.2-2' }}</span>
+          </div>
+        }
+      </div>
+      <div class="cart-total">
+        <span>Total:</span>
+        <strong>${{ getTotalPrice() | number:'1.2-2' }}</strong>
+      </div>
+      <div class="cart-actions">
+        <button mat-button (click)="toggleCart()">Seguir comprando</button>
+        <button mat-raised-button color="primary" (click)="checkout()">
+          Realizar pedido
+        </button>
+      </div>
+    </div>
+  }
+
+  <div class="filters-card">
+    <div class="filters-row">
+      <mat-form-field appearance="outline" class="filter-search">
+        <mat-label>Buscar producto</mat-label>
+        <input matInput [(ngModel)]="searchText" (ngModelChange)="applyFilters()" placeholder="Escribe para buscar...">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Categoría</mat-label>
+        <mat-select [(ngModel)]="filterCategory" (ngModelChange)="applyFilters()">
+          <mat-option [value]="null">Todas</mat-option>
+          @for (cat of categories; track cat.id) {
+            <mat-option [value]="cat.id">{{ cat.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <button mat-icon-button (click)="clearFilters()" matTooltip="Limpiar filtros" class="clear-btn">
+        <mat-icon>filter_alt_off</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="loading-container">
+      <mat-spinner diameter="48"></mat-spinner>
+    </div>
+  } @else {
+    <div class="products-grid">
+      @for (product of filteredProducts; track product.id) {
+        <mat-card class="product-card">
+          <mat-card-content>
+            <div class="product-category">{{ getCategoryName(product.categoryId) }}</div>
+            <h3 class="product-name">{{ product.name }}</h3>
+            @if (product.description) {
+              <p class="product-description">{{ product.description }}</p>
+            }
+            <div class="product-footer">
+              <span class="product-price">${{ product.price | number:'1.2-2' }}</span>
+              <div class="product-actions">
+                @if (getCartQuantity(product) > 0) {
+                  <div class="quantity-controls">
+                    <button mat-icon-button (click)="removeFromCart(product)">
+                      <mat-icon>remove</mat-icon>
+                    </button>
+                    <span>{{ getCartQuantity(product) }}</span>
+                    <button mat-icon-button (click)="addToCart(product)">
+                      <mat-icon>add</mat-icon>
+                    </button>
+                  </div>
+                } @else {
+                  <button mat-raised-button color="primary" (click)="addToCart(product)">
+                    <mat-icon>add_shopping_cart</mat-icon>
+                    Agregar
+                  </button>
+                }
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      }
+
+      @if (filteredProducts.length === 0) {
+        <div class="empty-state">
+          <mat-icon>store</mat-icon>
+          <p>No se encontraron productos</p>
+        </div>
+      }
+    </div>
+  }
+</div>

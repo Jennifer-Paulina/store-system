@@ -1,0 +1,20 @@
+# Build
+bin/
+obj/
+
+# Credenciales
+appsettings.json
+appsettings.Development.json
+
+# Migrations/
+
+# Visual Studio
+.vs/
+*.user
+
+# Logs
+*.log
+
+# Cobertura
+*.xml
+coverage/

@@ -1,0 +1,211 @@
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Inventario</h1>
+      <p class="page-subtitle">Control de existencias de productos</p>
+    </div>
+    <button mat-raised-button color="primary" (click)="openCreateForm()" [disabled]="productsWithoutInventory.length === 0">
+      <mat-icon>add</mat-icon>
+      Nuevo registro
+    </button>
+  </div>
+
+  @if (showCreateForm) {
+    <div class="form-card">
+      <h2 class="form-title">Nuevo registro de inventario</h2>
+      <form [formGroup]="createForm" (ngSubmit)="create()">
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Producto</mat-label>
+            <mat-select formControlName="productId">
+              @for (product of productsWithoutInventory; track product.id) {
+                <mat-option [value]="product.id">{{ product.name }}</mat-option>
+              }
+            </mat-select>
+            @if (createForm.get('productId')?.hasError('required') && createForm.get('productId')?.touched) {
+              <mat-error>El producto es requerido</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Stock inicial</mat-label>
+            <input matInput type="number" formControlName="stock" placeholder="0" min="0">
+            @if (createForm.get('stock')?.hasError('required') && createForm.get('stock')?.touched) {
+              <mat-error>El stock es requerido</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Stock mínimo</mat-label>
+            <input matInput type="number" formControlName="minStock" placeholder="0" min="0">
+            @if (createForm.get('minStock')?.hasError('required') && createForm.get('minStock')?.touched) {
+              <mat-error>El stock mínimo es requerido</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="form-actions">
+          <button mat-button type="button" (click)="closeCreateForm()">Cancelar</button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="createForm.invalid">
+            Registrar
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+
+  @if (showAdjustForm && selectedItem) {
+    <div class="form-card">
+      <h2 class="form-title">Ajustar stock — {{ getProductName(selectedItem.productId) }}</h2>
+      <p class="stock-info">Stock actual: <strong>{{ selectedItem.stock }}</strong></p>
+      <form [formGroup]="adjustForm" (ngSubmit)="adjust()">
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Tipo de movimiento</mat-label>
+            <mat-select formControlName="type">
+              @for (type of movementTypes; track type.value) {
+                <mat-option [value]="type.value">{{ type.label }}</mat-option>
+              }
+            </mat-select>
+            @if (adjustForm.get('type')?.hasError('required') && adjustForm.get('type')?.touched) {
+              <mat-error>El tipo es requerido</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Cantidad</mat-label>
+            <input matInput type="number" formControlName="quantity" placeholder="0" min="1">
+            @if (adjustForm.get('quantity')?.hasError('required') && adjustForm.get('quantity')?.touched) {
+              <mat-error>La cantidad es requerida</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Referencia</mat-label>
+            <input matInput formControlName="reference" placeholder="Motivo del ajuste">
+          </mat-form-field>
+        </div>
+
+        <div class="form-actions">
+          <button mat-button type="button" (click)="closeAdjustForm()">Cancelar</button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="adjustForm.invalid">
+            Aplicar ajuste
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+
+  @if (showEditMinStock && selectedItem) {
+    <div class="form-card">
+      <h2 class="form-title">Editar stock mínimo — {{ getProductName(selectedItem.productId) }}</h2>
+      <p class="stock-info">Stock mínimo actual: <strong>{{ selectedItem.minStock }}</strong></p>
+      <form [formGroup]="minStockForm" (ngSubmit)="saveMinStock()">
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Nuevo stock mínimo</mat-label>
+            <input matInput type="number" formControlName="minStock" placeholder="0" min="0">
+            @if (minStockForm.get('minStock')?.hasError('required') && minStockForm.get('minStock')?.touched) {
+              <mat-error>El stock mínimo es requerido</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="form-actions">
+          <button mat-button type="button" (click)="closeEditMinStock()">Cancelar</button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="minStockForm.invalid">
+            Guardar
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+
+  <div class="filters-card">
+    <div class="filters-row">
+      <mat-form-field appearance="outline" class="filter-search">
+        <mat-label>Buscar por nombre o ID de producto</mat-label>
+        <input matInput [(ngModel)]="searchText" (ngModelChange)="applyFilters()" placeholder="Escribe para buscar...">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Estado de stock</mat-label>
+        <mat-select [(ngModel)]="filterStatus" (ngModelChange)="applyFilters()">
+          <mat-option value="">Todos</mat-option>
+          <mat-option value="low">Stock bajo</mat-option>
+          <mat-option value="normal">Normal</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <button mat-icon-button (click)="clearFilters()" matTooltip="Limpiar filtros" class="clear-btn">
+        <mat-icon>filter_alt_off</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="loading-container">
+      <mat-spinner diameter="48"></mat-spinner>
+    </div>
+  } @else {
+    <div class="table-card">
+      <table mat-table [dataSource]="filteredInventory" class="data-table">
+        <ng-container matColumnDef="productId">
+          <th mat-header-cell *matHeaderCellDef>ID Producto</th>
+          <td mat-cell *matCellDef="let item">{{ item.productId }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="product">
+          <th mat-header-cell *matHeaderCellDef>Producto</th>
+          <td mat-cell *matCellDef="let item">{{ getProductName(item.productId) }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="stock">
+          <th mat-header-cell *matHeaderCellDef>Stock actual</th>
+          <td mat-cell *matCellDef="let item">
+            <span [class.low-stock]="item.isLowStock">{{ item.stock }}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="minStock">
+          <th mat-header-cell *matHeaderCellDef>Stock mínimo</th>
+          <td mat-cell *matCellDef="let item">{{ item.minStock }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Estado</th>
+          <td mat-cell *matCellDef="let item">
+            @if (item.isLowStock) {
+              <span class="status-badge warning">Stock bajo</span>
+            } @else {
+              <span class="status-badge ok">Normal</span>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Acciones</th>
+          <td mat-cell *matCellDef="let item">
+            <button mat-icon-button (click)="openAdjustForm(item)" matTooltip="Ajustar stock">
+              <mat-icon>tune</mat-icon>
+            </button>
+            <button mat-icon-button (click)="openEditMinStock(item)" matTooltip="Editar stock mínimo">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+
+      @if (filteredInventory.length === 0) {
+        <div class="empty-state">
+          <mat-icon>warehouse</mat-icon>
+          <p>No se encontraron registros</p>
+        </div>
+      }
+    </div>
+  }
+</div>

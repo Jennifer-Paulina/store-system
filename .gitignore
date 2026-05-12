@@ -1,0 +1,29 @@
+# Node
+store-api/node_modules/
+store-frontend/node_modules/
+
+# .NET
+AuthAPI/bin/
+AuthAPI/obj/
+AuthAPI/AuthAPI.Tests/bin/
+AuthAPI/AuthAPI.Tests/obj/
+
+# Variables de entorno
+**/.env
+AuthAPI/appsettings.json
+AuthAPI/appsettings.Development.json
+
+# Angular cache
+store-frontend/.angular/
+
+# Tickets PDF generados
+store-api/tickets/
+
+# Cobertura
+**/*.cobertura.xml
+**/coverage/
+
+# Git interno de cada proyecto
+store-api/.git/
+store-frontend/.git/
+AuthAPI/.git/

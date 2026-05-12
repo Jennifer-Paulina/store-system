@@ -1,0 +1,119 @@
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Pedidos</h1>
+      <p class="page-subtitle">Gestión de pedidos del sistema</p>
+    </div>
+  </div>
+
+  <div class="filters-card">
+    <div class="filters-row">
+      <mat-form-field appearance="outline" class="filter-id">
+        <mat-label>Buscar por ID</mat-label>
+        <input matInput [(ngModel)]="searchId" (ngModelChange)="applyFilters()" placeholder="Ej: 123">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Estado</mat-label>
+        <mat-select [(ngModel)]="filterStatus" (ngModelChange)="applyFilters()">
+          <mat-option value="">Todos</mat-option>
+          <mat-option value="PENDING_REVIEW">Pendiente</mat-option>
+          <mat-option value="CONFIRMED">Confirmado</mat-option>
+          <mat-option value="REJECTED">Rechazado</mat-option>
+          <mat-option value="CONFIRMATION_FAILED_STOCK">Sin stock</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-date">
+        <mat-label>Fecha desde</mat-label>
+        <input matInput [matDatepicker]="pickerFrom" [(ngModel)]="filterDateFrom" (ngModelChange)="applyFilters()" readonly>
+        <mat-datepicker-toggle matSuffix [for]="pickerFrom"></mat-datepicker-toggle>
+        <mat-datepicker #pickerFrom></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-date">
+        <mat-label>Fecha hasta</mat-label>
+        <input matInput [matDatepicker]="pickerTo" [(ngModel)]="filterDateTo" (ngModelChange)="applyFilters()" readonly>
+        <mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
+        <mat-datepicker #pickerTo></mat-datepicker>
+      </mat-form-field>
+
+      <button mat-icon-button (click)="clearFilters()" matTooltip="Limpiar filtros" class="clear-btn">
+        <mat-icon>filter_alt_off</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="loading-container">
+      <mat-spinner diameter="48"></mat-spinner>
+    </div>
+  } @else {
+    <div class="table-card">
+      <table mat-table [dataSource]="filteredOrders" class="data-table">
+
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef>#</th>
+          <td mat-cell *matCellDef="let order">{{ order.id }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="customer">
+          <th mat-header-cell *matHeaderCellDef>Cliente ID</th>
+          <td mat-cell *matCellDef="let order">{{ order.customerId }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="total">
+          <th mat-header-cell *matHeaderCellDef>Total</th>
+          <td mat-cell *matCellDef="let order">${{ order.total | number:'1.2-2' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Estado</th>
+          <td mat-cell *matCellDef="let order">
+            <span class="status-badge" [class]="getStatusClass(order.status)">
+              {{ getStatusLabel(order.status) }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="date">
+          <th mat-header-cell *matHeaderCellDef>Fecha</th>
+          <td mat-cell *matCellDef="let order">{{ order.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Acciones</th>
+          <td mat-cell *matCellDef="let order">
+            @if (order.status === OrderStatus.PENDING_REVIEW) {
+              <button mat-icon-button color="primary" (click)="confirm(order); $event.stopPropagation()" matTooltip="Confirmar">
+                <mat-icon>check_circle</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="reject(order); $event.stopPropagation()" matTooltip="Rechazar">
+                <mat-icon>cancel</mat-icon>
+              </button>
+            }
+            @if (order.status === OrderStatus.CONFIRMED) {
+              <button mat-icon-button (click)="downloadTicket(order); $event.stopPropagation()" matTooltip="Descargar ticket">
+                <mat-icon>picture_as_pdf</mat-icon>
+              </button>
+            }
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" 
+            class="order-row" 
+            (click)="toggleExpand(row)">
+        </tr>
+      
+      </table>
+      @if (filteredOrders.length === 0) {
+        <div class="empty-state">
+          <mat-icon>shopping_cart</mat-icon>
+          <p>No hay pedidos registrados</p>
+        </div>
+      }
+    </div>
+  }
+</div>

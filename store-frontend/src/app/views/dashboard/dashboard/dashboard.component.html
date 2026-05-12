@@ -1,0 +1,158 @@
+<div class="dashboard-container">
+  @if (loading) {
+    <div class="loading-container">
+      <mat-spinner diameter="48"></mat-spinner>
+    </div>
+  } @else if (role === 'Customer') {
+
+    <!-- Dashboard Cliente -->
+    <div class="welcome-header">
+      <h1 class="page-title">¡Bienvenido, {{ user?.name }}!</h1>
+    </div>
+
+    @if (customer?.status === 'PENDING') {
+      <mat-card class="status-card pending">
+        <mat-card-content>
+          <div class="status-content">
+            <mat-icon class="status-icon">hourglass_empty</mat-icon>
+            <div class="status-info">
+              <h2>Cuenta pendiente de aprobación</h2>
+              <p>Tu solicitud está siendo revisada. Cuando sea aprobada podrás realizar pedidos.</p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    } @else if (customer?.status === 'INACTIVE') {
+      <mat-card class="status-card inactive">
+        <mat-card-content>
+          <div class="status-content">
+            <mat-icon class="status-icon">block</mat-icon>
+            <div class="status-info">
+              <h2>Cuenta inactiva</h2>
+              <p>Tu cuenta ha sido desactivada. Contacta al administrador para más información.</p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    } @else if (customer?.status === 'ACTIVE') {
+      @if (!isProfileComplete()) {
+        <mat-card class="status-card warning">
+          <mat-card-content>
+            <div class="status-content">
+              <mat-icon class="status-icon">warning</mat-icon>
+              <div class="status-info">
+                <h2>Completa tu perfil</h2>
+                <p>Necesitas agregar tu teléfono y dirección para poder realizar pedidos.</p>
+                <button mat-raised-button color="primary" (click)="goToProfile()">
+                  Completar perfil
+                </button>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      } @else {
+        <div class="customer-metrics">
+          <mat-card class="metric-card" (click)="goToOrders()">
+            <mat-card-content>
+              <div class="metric-content">
+                <div class="metric-info">
+                  <span class="metric-label">Mis pedidos</span>
+                  <span class="metric-value">{{ customerOrders.total }}</span>
+                  <span class="metric-sub">{{ customerOrders.pending }} pendientes</span>
+                </div>
+                <div class="metric-icon-container blue">
+                  <mat-icon>shopping_cart</mat-icon>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card class="metric-card" (click)="goToCatalog()">
+            <mat-card-content>
+              <div class="metric-content">
+                <div class="metric-info">
+                  <span class="metric-label">Catálogo</span>
+                  <span class="metric-value">
+                    <mat-icon style="font-size:32px;width:32px;height:32px;">store</mat-icon>
+                  </span>
+                  <span class="metric-sub">Ver productos disponibles</span>
+                </div>
+                <div class="metric-icon-container green">
+                  <mat-icon>arrow_forward</mat-icon>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      }
+    }
+
+  } @else {
+
+    <!-- Dashboard Admin/Worker -->
+    <h1 class="page-title">Dashboard</h1>
+    <p class="page-subtitle">Resumen general del sistema</p>
+
+    <div class="metrics-grid">
+      <mat-card class="metric-card">
+        <mat-card-content>
+          <div class="metric-content">
+            <div class="metric-info">
+              <span class="metric-label">Productos</span>
+              <span class="metric-value">{{ metrics.totalProducts }}</span>
+              <span class="metric-sub">{{ metrics.activeProducts }} activos</span>
+            </div>
+            <div class="metric-icon-container blue">
+              <mat-icon>inventory_2</mat-icon>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="metric-card">
+        <mat-card-content>
+          <div class="metric-content">
+            <div class="metric-info">
+              <span class="metric-label">Clientes</span>
+              <span class="metric-value">{{ metrics.totalCustomers }}</span>
+              <span class="metric-sub">{{ metrics.activeCustomers }} activos</span>
+            </div>
+            <div class="metric-icon-container green">
+              <mat-icon>people</mat-icon>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="metric-card">
+        <mat-card-content>
+          <div class="metric-content">
+            <div class="metric-info">
+              <span class="metric-label">Pedidos pendientes</span>
+              <span class="metric-value">{{ metrics.pendingOrders }}</span>
+              <span class="metric-sub">{{ metrics.confirmedOrders }} confirmados</span>
+            </div>
+            <div class="metric-icon-container warning">
+              <mat-icon>shopping_cart</mat-icon>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="metric-card">
+        <mat-card-content>
+          <div class="metric-content">
+            <div class="metric-info">
+              <span class="metric-label">Stock bajo</span>
+              <span class="metric-value">{{ metrics.lowStockItems }}</span>
+              <span class="metric-sub">items por reabastecer</span>
+            </div>
+            <div class="metric-icon-container danger">
+              <mat-icon>warehouse</mat-icon>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  }
+</div>

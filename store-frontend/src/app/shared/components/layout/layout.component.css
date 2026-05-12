@@ -1,0 +1,148 @@
+.sidenav-container {
+  height: 100vh;
+}
+
+.sidenav {
+  width: 240px;
+  background-color: var(--primary);
+  border-right: none;
+  overflow: hidden;
+}
+
+.sidenav-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 24px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.sidenav-logo {
+  color: white;
+  font-size: 28px;
+  width: 28px;
+  height: 28px;
+}
+
+.sidenav-title {
+  color: white;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+mat-nav-list a {
+  color: rgba(255,255,255,0.85) !important;
+  margin: 4px 8px;
+  border-radius: 8px;
+}
+
+mat-nav-list a:hover {
+  background-color: rgba(255,255,255,0.1) !important;
+  color: white !important;
+}
+
+mat-nav-list a.active-link {
+  background-color: rgba(255,255,255,0.2) !important;
+  color: white !important;
+}
+
+::ng-deep .mat-mdc-list-item-title {
+  color: white !important;
+}
+
+::ng-deep mat-nav-list .mat-mdc-list-item .mat-icon {
+  color: rgba(255,255,255,0.85) !important;
+}
+
+.user-button {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 8px;
+  margin-left: auto;
+}
+
+.toolbar {
+  background-color: var(--surface);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 16px;
+}
+
+.toolbar-spacer {
+  flex: 1;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-right: 12px;
+}
+
+.user-name {
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.user-role {
+  font-size: 11px;
+  color: var(--primary);
+  background: var(--accent);
+  padding: 1px 6px;
+  border-radius: 10px;
+  margin-top: 2px;
+}
+
+.sidenav-content {
+  background-color: var(--background);
+}
+
+.content {
+  padding: 24px;
+}
+
+.user-name-toolbar {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-right: 6px;
+  padding-left: 8px;
+  padding-top: 8px;
+}
+
+.menu-user-info {
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  min-width: 180px;
+}
+
+.menu-name {
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.menu-role {
+  font-size: 12px;
+  color: var(--primary);
+  background: var(--accent);
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-top: 4px;
+  align-self: flex-start;
+}
+
+.menu-email {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}

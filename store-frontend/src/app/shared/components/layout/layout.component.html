@@ -1,0 +1,42 @@
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav #sidenav mode="side" opened class="sidenav">
+    <div class="sidenav-header">
+      <mat-icon class="sidenav-logo">store</mat-icon>
+      <span class="sidenav-title">StoreSystem</span>
+    </div>
+
+    <mat-nav-list>
+      @for (item of menuItems; track item.route) {
+        <a mat-list-item [routerLink]="item.route" routerLinkActive="active-link">
+          <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+          <span matListItemTitle>{{ item.label }}</span>
+        </a>
+      }
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content class="sidenav-content">
+    <mat-toolbar class="toolbar">
+  <span class="toolbar-spacer"></span>
+  <span class="user-name-toolbar">{{ user?.name }}</span>
+  <button mat-icon-button [matMenuTriggerFor]="userMenu" style="width: 40px; height: 40px;">
+    <mat-icon style="font-size: 32px; width: 32px; height: 32px;">account_circle</mat-icon>
+  </button>
+  <mat-menu #userMenu="matMenu">
+  <div class="menu-user-info">
+    <span class="menu-name">{{ user?.name }}</span>
+    <span class="menu-email">{{ user?.email }}</span>
+    <span class="menu-role">{{ getRoleLabel() }}</span>
+  </div>
+  <mat-divider></mat-divider>
+  <button mat-menu-item (click)="logout()">
+    <mat-icon>logout</mat-icon>
+    Cerrar sesión
+  </button>
+</mat-menu>
+</mat-toolbar>
+    <div class="content">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

@@ -1,0 +1,115 @@
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Categorías</h1>
+      <p class="page-subtitle">Gestión de categorías de productos</p>
+    </div>
+    <button mat-raised-button color="primary" (click)="openForm()">
+      <mat-icon>add</mat-icon>
+      Nueva categoría
+    </button>
+  </div>
+  @if (showForm) {
+    <div class="form-card">
+      <h2 class="form-title">{{ editingCategory ? 'Editar categoría' : 'Nueva categoría' }}</h2>
+      <form [formGroup]="form" (ngSubmit)="save()">
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Nombre</mat-label>
+            <input matInput formControlName="name" placeholder="Nombre de la categoría">
+            @if (form.get('name')?.hasError('required') && form.get('name')?.touched) {
+              <mat-error>El nombre es requerido</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Descripción</mat-label>
+            <input matInput formControlName="description" placeholder="Descripción opcional">
+          </mat-form-field>
+        </div>
+
+        <div class="form-actions">
+          <button mat-button type="button" (click)="closeForm()">Cancelar</button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">
+            {{ editingCategory ? 'Actualizar' : 'Crear' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+<div class="filters-card">
+  <div class="filters-row">
+    <mat-form-field appearance="outline" class="filter-search">
+      <mat-label>Buscar por nombre</mat-label>
+      <input matInput [(ngModel)]="searchText" (ngModelChange)="applyFilters()" placeholder="Escribe para buscar...">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Estado</mat-label>
+      <mat-select [(ngModel)]="filterStatus" (ngModelChange)="applyFilters()">
+        <mat-option value="">Todos</mat-option>
+        <mat-option value="active">Activa</mat-option>
+        <mat-option value="inactive">Inactiva</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <button mat-icon-button (click)="clearFilters()" matTooltip="Limpiar filtros" class="clear-btn">
+      <mat-icon>filter_alt_off</mat-icon>
+    </button>
+  </div>
+</div>
+  @if (loading) {
+    <div class="loading-container">
+      <mat-spinner diameter="48"></mat-spinner>
+    </div>
+  } @else {
+    <div class="table-card">
+      <table mat-table [dataSource]="filteredCategories" class="data-table">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Nombre</th>
+          <td mat-cell *matCellDef="let category">{{ category.name }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="description">
+          <th mat-header-cell *matHeaderCellDef>Descripción</th>
+          <td mat-cell *matCellDef="let category">{{ category.description || '—' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Estado</th>
+          <td mat-cell *matCellDef="let category">
+            <span class="status-badge" [class.active]="category.isActive" [class.inactive]="!category.isActive">
+              {{ category.isActive ? 'Activa' : 'Inactiva' }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Acciones</th>
+          <td mat-cell *matCellDef="let category">
+            <button mat-icon-button (click)="openForm(category)" matTooltip="Editar">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button (click)="toggleStatus(category)" [matTooltip]="category.isActive ? 'Desactivar' : 'Activar'">
+              <mat-icon>{{ category.isActive ? 'toggle_on' : 'toggle_off' }}</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="delete(category)" matTooltip="Eliminar">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+
+      @if (categories.length === 0) {
+        <div class="empty-state">
+          <mat-icon>category</mat-icon>
+          <p>No hay categorías registradas</p>
+        </div>
+      }
+    </div>
+  }
+</div>
