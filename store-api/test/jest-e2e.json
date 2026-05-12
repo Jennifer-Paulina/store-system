@@ -24,6 +24,7 @@
     "!src/shared/guards/**",
     "!src/modules/orders/application/presenters/*.ts",
     "!src/modules/products/application/presenters/*.ts",
-    "!src/modules/products/domain/exceptions/*.ts"
+    "!src/modules/products/domain/exceptions/*.ts",
+    "!src/infrastructure/database/prisma.service.ts"
   ]
 }

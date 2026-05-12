@@ -1,14 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../../../infrastructure/database/prisma.service';
+import { PrismaWriteService } from '../../../../infrastructure/database/prisma-write.service';
+import { PrismaReadService } from '../../../../infrastructure/database/prisma-read.service';
 import { IOrderRepository } from '../../domain/interfaces/order.repository.interface';
 import { Order, OrderItem, OrderStatus } from '../../domain/entities/order.entity';
 
 @Injectable()
 export class OrderRepository implements IOrderRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prismaWrite: PrismaWriteService,
+    private readonly prismaRead: PrismaReadService,
+  ) {}
 
   async findAll(): Promise<Order[]> {
-    const orders = await this.prisma.order.findMany({
+    this.prismaRead.checkAvailability();
+    const orders = await this.prismaRead.order.findMany({
       include: { items: true },
       orderBy: { createdAt: 'desc' },
     });
@@ -16,7 +21,8 @@ export class OrderRepository implements IOrderRepository {
   }
 
   async findById(id: number): Promise<Order | null> {
-    const order = await this.prisma.order.findUnique({
+    this.prismaRead.checkAvailability();
+    const order = await this.prismaRead.order.findUnique({
       where: { id },
       include: { items: true },
     });
@@ -24,7 +30,8 @@ export class OrderRepository implements IOrderRepository {
   }
 
   async findByCustomer(customerId: number): Promise<Order[]> {
-    const orders = await this.prisma.order.findMany({
+    this.prismaRead.checkAvailability();
+    const orders = await this.prismaRead.order.findMany({
       where: { customerId },
       include: { items: true },
       orderBy: { createdAt: 'desc' },
@@ -36,7 +43,7 @@ export class OrderRepository implements IOrderRepository {
     order: Omit<Order, 'id' | 'createdAt' | 'updatedAt' | 'items'>,
     items: Omit<OrderItem, 'id' | 'orderId'>[],
   ): Promise<Order> {
-    const created = await this.prisma.order.create({
+    const created = await this.prismaWrite.order.create({
       data: {
         total: order.total,
         status: order.status,
@@ -58,7 +65,7 @@ export class OrderRepository implements IOrderRepository {
   }
 
   async updateStatus(id: number, status: OrderStatus): Promise<Order> {
-    const updated = await this.prisma.order.update({
+    const updated = await this.prismaWrite.order.update({
       where: { id },
       data: { status },
       include: { items: true },

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../../../infrastructure/database/prisma.service';
+import { PrismaWriteService } from '../../../../infrastructure/database/prisma-write.service';
+import { PrismaReadService } from '../../../../infrastructure/database/prisma-read.service';
 
 export interface TicketRecord {
   id: number;
@@ -10,16 +11,20 @@ export interface TicketRecord {
 
 @Injectable()
 export class TicketRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prismaWrite: PrismaWriteService,
+    private readonly prismaRead: PrismaReadService,
+  ) {}
 
   async create(orderId: number, fileUrl: string): Promise<TicketRecord> {
-    return await this.prisma.ticket.create({
+    return await this.prismaWrite.ticket.create({
       data: { orderId, fileUrl },
     });
   }
 
   async findByOrderId(orderId: number): Promise<TicketRecord | null> {
-    return await this.prisma.ticket.findUnique({
+    this.prismaRead.checkAvailability();
+    return await this.prismaRead.ticket.findUnique({
       where: { orderId },
     });
   }

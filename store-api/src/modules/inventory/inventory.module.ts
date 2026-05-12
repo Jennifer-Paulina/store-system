@@ -3,12 +3,14 @@ import { InventoryController } from './application/controllers/inventory.control
 import { InventoryLogic } from './application/logic/inventory.logic';
 import { InventoryRepository } from './infrastructure/repositories/inventory.repository';
 import { IInventoryRepository } from './domain/interfaces/inventory.repository.interface';
-import { PrismaService } from '../../infrastructure/database/prisma.service';
+import { PrismaWriteService } from '../../infrastructure/database/prisma-write.service';
+import { PrismaReadService } from '../../infrastructure/database/prisma-read.service';
 
 @Module({
   controllers: [InventoryController],
   providers: [
-    PrismaService,
+    PrismaWriteService,
+    PrismaReadService,
     InventoryLogic,
     {
       provide: IInventoryRepository,

@@ -3,12 +3,14 @@ import { CategoryController } from './application/controllers/category.controlle
 import { CategoryLogic } from './application/logic/category.logic';
 import { CategoryRepository } from './infrastructure/repositories/category.repository';
 import { ICategoryRepository } from './domain/interfaces/category.repository.interface';
-import { PrismaService } from '../../infrastructure/database/prisma.service';
+import { PrismaWriteService } from '../../infrastructure/database/prisma-write.service';
+import { PrismaReadService } from '../../infrastructure/database/prisma-read.service';
 
 @Module({
   controllers: [CategoryController],
   providers: [
-    PrismaService,
+    PrismaWriteService,
+    PrismaReadService,
     CategoryLogic,
     {
       provide: ICategoryRepository,

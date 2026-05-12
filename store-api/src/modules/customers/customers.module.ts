@@ -3,12 +3,14 @@ import { CustomerController } from './application/controllers/customer.controlle
 import { CustomerLogic } from './application/logic/customer.logic';
 import { CustomerRepository } from './infrastructure/repositories/customer.repository';
 import { ICustomerRepository } from './domain/interfaces/customer.repository.interface';
-import { PrismaService } from '../../infrastructure/database/prisma.service';
+import { PrismaWriteService } from '../../infrastructure/database/prisma-write.service';
+import { PrismaReadService } from '../../infrastructure/database/prisma-read.service';
 
 @Module({
   controllers: [CustomerController],
   providers: [
-    PrismaService,
+    PrismaWriteService,
+    PrismaReadService,
     CustomerLogic,
     {
       provide: ICustomerRepository,

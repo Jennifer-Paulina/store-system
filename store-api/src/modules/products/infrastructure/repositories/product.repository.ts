@@ -1,14 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../../../infrastructure/database/prisma.service';
+import { PrismaWriteService } from '../../../../infrastructure/database/prisma-write.service';
+import { PrismaReadService } from '../../../../infrastructure/database/prisma-read.service';
 import { IProductRepository } from '../../domain/interfaces/product.repository.interface';
 import { Product, ProductVariant } from '../../domain/entities/product.entity';
 
 @Injectable()
 export class ProductRepository implements IProductRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prismaWrite: PrismaWriteService,
+    private readonly prismaRead: PrismaReadService,
+  ) {}
 
   async findAll(): Promise<Product[]> {
-    const products = await this.prisma.product.findMany({
+    this.prismaRead.checkAvailability();
+    const products = await this.prismaRead.product.findMany({
       include: { variants: true },
       orderBy: { name: 'asc' },
     });
@@ -16,7 +21,8 @@ export class ProductRepository implements IProductRepository {
   }
 
   async findById(id: number): Promise<Product | null> {
-    const product = await this.prisma.product.findUnique({
+    this.prismaRead.checkAvailability();
+    const product = await this.prismaRead.product.findUnique({
       where: { id },
       include: { variants: true },
     });
@@ -24,7 +30,8 @@ export class ProductRepository implements IProductRepository {
   }
 
   async findByCategory(categoryId: number): Promise<Product[]> {
-    const products = await this.prisma.product.findMany({
+    this.prismaRead.checkAvailability();
+    const products = await this.prismaRead.product.findMany({
       where: { categoryId },
       include: { variants: true },
       orderBy: { name: 'asc' },
@@ -33,7 +40,7 @@ export class ProductRepository implements IProductRepository {
   }
 
   async create(product: Omit<Product, 'id' | 'createdAt' | 'updatedAt' | 'variants'>): Promise<Product> {
-    const created = await this.prisma.product.create({
+    const created = await this.prismaWrite.product.create({
       data: {
         name: product.name,
         description: product.description,
@@ -48,7 +55,7 @@ export class ProductRepository implements IProductRepository {
   }
 
   async update(id: number, product: Partial<Product>): Promise<Product> {
-    const updated = await this.prisma.product.update({
+    const updated = await this.prismaWrite.product.update({
       where: { id },
       data: {
         name: product.name,
@@ -64,17 +71,17 @@ export class ProductRepository implements IProductRepository {
   }
 
   async delete(id: number): Promise<void> {
-    await this.prisma.product.delete({ where: { id } });
+    await this.prismaWrite.product.delete({ where: { id } });
   }
 
   async createVariant(variant: Omit<ProductVariant, 'id' | 'createdAt'>): Promise<ProductVariant> {
-    return await this.prisma.productVariant.create({
+    return await this.prismaWrite.productVariant.create({
       data: variant,
     });
   }
 
   async deleteVariant(variantId: number): Promise<void> {
-    await this.prisma.productVariant.delete({ where: { id: variantId } });
+    await this.prismaWrite.productVariant.delete({ where: { id: variantId } });
   }
 
   private mapProduct(product: any): Product {

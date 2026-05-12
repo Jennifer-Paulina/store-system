@@ -3,12 +3,14 @@ import { ProductController } from './application/controllers/product.controller'
 import { ProductLogic } from './application/logic/product.logic';
 import { ProductRepository } from './infrastructure/repositories/product.repository';
 import { IProductRepository } from './domain/interfaces/product.repository.interface';
-import { PrismaService } from '../../infrastructure/database/prisma.service';
+import { PrismaWriteService } from '../../infrastructure/database/prisma-write.service';
+import { PrismaReadService } from '../../infrastructure/database/prisma-read.service';
 
 @Module({
   controllers: [ProductController],
   providers: [
-    PrismaService,
+    PrismaWriteService,
+    PrismaReadService,
     ProductLogic,
     {
       provide: IProductRepository,

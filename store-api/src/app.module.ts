@@ -7,6 +7,8 @@ import { CustomersModule } from './modules/customers/customers.module';
 import { ProductsModule } from './modules/products/products.module';
 import { InventoryModule } from './modules/inventory/inventory.module';
 import { OrdersModule } from './modules/orders/orders.module';
+import { PrismaWriteService } from './infrastructure/database/prisma-write.service';
+import { PrismaReadService } from './infrastructure/database/prisma-read.service';
 
 @Module({
   imports: [
@@ -27,5 +29,7 @@ import { OrdersModule } from './modules/orders/orders.module';
     InventoryModule,
     OrdersModule,
   ],
+  providers: [PrismaWriteService, PrismaReadService],
+  exports: [PrismaWriteService, PrismaReadService],
 })
 export class AppModule {}
