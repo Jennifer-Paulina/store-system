@@ -1,5 +1,6 @@
 import { Provider } from '@nestjs/common';
-import { PrismaService } from '../database/prisma.service';
+import { PrismaWriteService } from '../database/prisma-write.service';
+import { PrismaReadService } from '../database/prisma-read.service';
 
 // ─── Repositories ─────────────────────────────────────────────
 
@@ -28,7 +29,8 @@ import { OrderRepository } from '../../modules/orders/infrastructure/repositorie
 import { IOrderRepository } from '../../modules/orders/domain/interfaces/order.repository.interface';
 
 export const DatabaseProviders: Provider[] = [
-  PrismaService,
+  PrismaWriteService,
+  PrismaReadService,
   {
     provide: IProductRepository,
     useClass: ProductRepository,

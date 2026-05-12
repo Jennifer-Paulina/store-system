@@ -10,6 +10,7 @@ import { ProductsModule } from '../products/products.module';
 import { InventoryModule } from '../inventory/inventory.module';
 import { CustomersModule } from '../customers/customers.module';
 import { TicketService } from './infrastructure/services/ticket.service';
+import { OrderTasks } from './application/tasks/order.tasks';
 
 @Module({
   imports: [ProductsModule, InventoryModule, CustomersModule],
@@ -20,6 +21,7 @@ import { TicketService } from './infrastructure/services/ticket.service';
     OrderLogic,
     TicketService,
     TicketRepository,
+    OrderTasks,
     {
       provide: IOrderRepository,
       useClass: OrderRepository,

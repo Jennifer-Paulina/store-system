@@ -5,6 +5,7 @@ import { InventoryRepository } from './infrastructure/repositories/inventory.rep
 import { IInventoryRepository } from './domain/interfaces/inventory.repository.interface';
 import { PrismaWriteService } from '../../infrastructure/database/prisma-write.service';
 import { PrismaReadService } from '../../infrastructure/database/prisma-read.service';
+import { InventoryTasks } from './application/tasks/inventory.tasks';
 
 @Module({
   controllers: [InventoryController],
@@ -12,6 +13,7 @@ import { PrismaReadService } from '../../infrastructure/database/prisma-read.ser
     PrismaWriteService,
     PrismaReadService,
     InventoryLogic,
+    InventoryTasks,
     {
       provide: IInventoryRepository,
       useClass: InventoryRepository,

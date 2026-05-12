@@ -67,6 +67,8 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddHostedService<AuthAPI.Application.Tasks.RefreshTokenCleanupTask>();
+
 var app = builder.Build();
 
 app.UseCors("AllowAngular");
