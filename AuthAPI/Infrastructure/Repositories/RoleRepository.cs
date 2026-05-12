@@ -7,21 +7,25 @@ namespace AuthAPI.Infrastructure.Repositories;
 
 public class RoleRepository : IRoleRepository
 {
-    private readonly AppDbContext _context;
+    private readonly ReadDbContext _readContext;
 
-    public RoleRepository(AppDbContext context)
+    public RoleRepository(ReadDbContext readContext)
     {
-        _context = context;
+        _readContext = readContext;
     }
 
     public async Task<Role?> GetByNameAsync(string name)
-        => await _context.Roles.FirstOrDefaultAsync(r => r.Name == name);
+        => await _readContext.Roles
+            .AsNoTracking()
+            .FirstOrDefaultAsync(r => r.Name == name);
 
     public async Task<IEnumerable<Role>> GetAllAsync()
-        => await _context.Roles.ToListAsync();
+        => await _readContext.Roles
+            .AsNoTracking()
+            .ToListAsync();
 
     public async Task<Role?> GetByIdAsync(int id)
-    {
-        return await _context.Roles.FindAsync(id);
-    }
+        => await _readContext.Roles
+            .AsNoTracking()
+            .FirstOrDefaultAsync(r => r.Id == id);
 }

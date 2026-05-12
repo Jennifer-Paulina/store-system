@@ -7,46 +7,59 @@ namespace AuthAPI.Infrastructure.Repositories;
 
 public class UserRepository : IUserRepository
 {
-    private readonly AppDbContext _context;
+    private readonly WriteDbContext _writeContext;
+    private readonly ReadDbContext _readContext;
 
-    public UserRepository(AppDbContext context)
+    public UserRepository(WriteDbContext writeContext, ReadDbContext readContext)
     {
-        _context = context;
+        _writeContext = writeContext;
+        _readContext = readContext;
     }
 
     public async Task<User?> GetByIdAsync(int id)
-        => await _context.Users.Include(u => u.Role).FirstOrDefaultAsync(u => u.Id == id);
+        => await _readContext.Users
+            .AsNoTracking()
+            .Include(u => u.Role)
+            .FirstOrDefaultAsync(u => u.Id == id);
 
     public async Task<User?> GetByEmailAsync(string email)
-        => await _context.Users.Include(u => u.Role).FirstOrDefaultAsync(u => u.Email == email);
+        => await _readContext.Users
+            .AsNoTracking()
+            .Include(u => u.Role)
+            .FirstOrDefaultAsync(u => u.Email == email);
 
     public async Task<IEnumerable<User>> GetAllAsync()
-        => await _context.Users.Include(u => u.Role).ToListAsync();
+        => await _readContext.Users
+            .AsNoTracking()
+            .Include(u => u.Role)
+            .ToListAsync();
+
+    public async Task<bool> ExistsAsync(string email)
+        => await _readContext.Users
+            .AsNoTracking()
+            .AnyAsync(u => u.Email == email);
 
     public async Task<User> CreateAsync(User user)
     {
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync();
+        _writeContext.Users.Add(user);
+        await _writeContext.SaveChangesAsync();
         return user;
     }
 
     public async Task<User> UpdateAsync(User user)
     {
-        _context.Users.Update(user);
-        await _context.SaveChangesAsync();
+        _writeContext.Users.Update(user);
+        await _writeContext.SaveChangesAsync();
         return user;
     }
 
     public async Task DeleteAsync(int id)
     {
-        var user = await _context.Users.FindAsync(id);
+        var user = await _writeContext.Users.FindAsync(id);
         if (user != null)
         {
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
+            _writeContext.Users.Remove(user);
+            await _writeContext.SaveChangesAsync();
         }
     }
-
-    public async Task<bool> ExistsAsync(string email)
-        => await _context.Users.AnyAsync(u => u.Email == email);
 }

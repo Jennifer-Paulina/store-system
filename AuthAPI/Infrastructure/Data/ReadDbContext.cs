@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AuthAPI.Infrastructure.Data;
 
-public class AppDbContext : DbContext
+public class ReadDbContext : DbContext
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+    public ReadDbContext(DbContextOptions<ReadDbContext> options) : base(options) { }
 
     public DbSet<User> Users => Set<User>();
     public DbSet<Role> Roles => Set<Role>();
@@ -15,14 +15,12 @@ public class AppDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        // Configuración de Role
         modelBuilder.Entity<Role>(entity =>
         {
             entity.HasKey(r => r.Id);
             entity.Property(r => r.Name).IsRequired().HasMaxLength(50);
         });
 
-        // Configuración de User
         modelBuilder.Entity<User>(entity =>
         {
             entity.HasKey(u => u.Id);
@@ -36,7 +34,6 @@ public class AppDbContext : DbContext
                   .HasForeignKey(u => u.RoleId);
         });
 
-        // Configuración de RefreshToken
         modelBuilder.Entity<RefreshToken>(entity =>
         {
             entity.HasKey(rt => rt.Id);
@@ -46,12 +43,5 @@ public class AppDbContext : DbContext
                   .WithMany(u => u.RefreshTokens)
                   .HasForeignKey(rt => rt.UserId);
         });
-
-        // Seed de roles iniciales
-        modelBuilder.Entity<Role>().HasData(
-            new Role { Id = 1, Name = "Admin" },
-            new Role { Id = 2, Name = "Worker" },
-            new Role { Id = 3, Name = "Customer" }
-        );
     }
 }

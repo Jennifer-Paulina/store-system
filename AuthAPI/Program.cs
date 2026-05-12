@@ -10,9 +10,13 @@ using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ─── Base de datos ───────────────────────────────────────────────
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+// ─── Base de datos Write ──────────────────────────────────────────
+builder.Services.AddDbContext<WriteDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("WriteConnection")));
+
+// ─── Base de datos Read ───────────────────────────────────────────
+builder.Services.AddDbContext<ReadDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("ReadConnection")));
 
 // ─── Repositorios (Dependency Injection) ─────────────────────────
 builder.Services.AddScoped<IUserRepository, UserRepository>();
