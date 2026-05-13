@@ -66,8 +66,7 @@ services:
       - postgres-read-data:/var/lib/postgresql/data
     command: |
       bash -c "
-      echo 'postgres-write:5432:replication:replicator:' > /root/.pgpass
-      chmod 600 /root/.pgpass
+      rm -rf /var/lib/postgresql/data/*
       until pg_basebackup -h postgres-write -D /var/lib/postgresql/data -U replicator -vP -Xs -R --checkpoint=fast; do
         echo 'Esperando al servidor primario...'
         sleep 2
