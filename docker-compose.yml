@@ -2,7 +2,9 @@ services:
 
   # ─── SQL Server ───────────────────────────────────────────────
   sql-server:
-    image: mcr.microsoft.com/mssql/server:2022-latest
+    build:
+      context: .
+      dockerfile: sqlserver.Dockerfile
     container_name: sql-server
     environment:
       SA_PASSWORD: "${SQL_SERVER_PASSWORD}"
@@ -12,12 +14,11 @@ services:
       - "1433:1433"
     volumes:
       - sql-server-data:/var/opt/mssql
-      - ./init-sqlserver.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       store-network:
         ipv4_address: 172.20.0.2
     healthcheck:
-      test: ["CMD", "/opt/mssql-tools18/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "${SQL_SERVER_PASSWORD}", "-No", "-Q", "SELECT 1"]
+      test: ["CMD", "/opt/mssql-tools18/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "${SQL_SERVER_PASSWORD}", "-C", "-Q", "SELECT 1"]
       interval: 10s
       timeout: 5s
       retries: 10
@@ -30,11 +31,13 @@ services:
       POSTGRES_USER: "${POSTGRES_USER}"
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
       POSTGRES_DB: storedb
+      POSTGRES_INITDB_ARGS: "--auth-host=md5"
     ports:
       - "5432:5432"
     volumes:
       - postgres-write-data:/var/lib/postgresql/data
-      - ./init-postgres.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./init-postgres.sql:/docker-entrypoint-initdb.d/01-init.sql
+      - ./init-replicator.sql:/docker-entrypoint-initdb.d/02-replicator.sql
       - ./postgres-primary.conf:/etc/postgresql/postgresql.conf
       - ./pg_hba.conf:/etc/postgresql/pg_hba.conf
     command: postgres -c config_file=/etc/postgresql/postgresql.conf -c hba_file=/etc/postgresql/pg_hba.conf
@@ -51,6 +54,7 @@ services:
   postgres-read:
     image: postgres:16
     container_name: postgres-read
+    user: postgres
     environment:
       POSTGRES_USER: "${POSTGRES_USER}"
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
@@ -62,6 +66,8 @@ services:
       - postgres-read-data:/var/lib/postgresql/data
     command: |
       bash -c "
+      echo 'postgres-write:5432:replication:replicator:' > /root/.pgpass
+      chmod 600 /root/.pgpass
       until pg_basebackup -h postgres-write -D /var/lib/postgresql/data -U replicator -vP -Xs -R --checkpoint=fast; do
         echo 'Esperando al servidor primario...'
         sleep 2

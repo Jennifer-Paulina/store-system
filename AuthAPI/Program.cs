@@ -10,13 +10,25 @@ using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ─── Base de datos Write ──────────────────────────────────────────
 builder.Services.AddDbContext<WriteDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("WriteConnection")));
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("WriteConnection"),
+        sqlOptions => sqlOptions.EnableRetryOnFailure(
+            maxRetryCount: 5,
+            maxRetryDelay: TimeSpan.FromSeconds(10),
+            errorNumbersToAdd: null
+        )
+    ));
 
-// ─── Base de datos Read ───────────────────────────────────────────
 builder.Services.AddDbContext<ReadDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("ReadConnection")));
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("ReadConnection"),
+        sqlOptions => sqlOptions.EnableRetryOnFailure(
+            maxRetryCount: 5,
+            maxRetryDelay: TimeSpan.FromSeconds(10),
+            errorNumbersToAdd: null
+        )
+    ));
 
 // ─── Repositorios (Dependency Injection) ─────────────────────────
 builder.Services.AddScoped<IUserRepository, UserRepository>();

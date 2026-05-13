@@ -12,7 +12,8 @@ export class InventoryTasks {
     private readonly prismaWrite: PrismaWriteService,
   ) {}
 
-  @Cron('0 */10 * * * *') // Cada 10 minutos
+  @Cron('0 */2 * * * *') // Cada 2 minutos
+  //@Cron('0 */10 * * * *') // Cada 10 minutos
   //@Cron('0 * * * * *') // Cada 1 minuto
   async checkLowStock(): Promise<void> {
     this.logger.log('Iniciando verificación de stock bajo...');

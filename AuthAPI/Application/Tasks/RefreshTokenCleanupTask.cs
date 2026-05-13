@@ -10,7 +10,8 @@ public class RefreshTokenCleanupTask : BackgroundService
 {
     private readonly ILogger<RefreshTokenCleanupTask> _logger;
     private readonly IServiceScopeFactory _scopeFactory;
-    private readonly TimeSpan _interval = TimeSpan.FromHours(1);
+    //private readonly TimeSpan _interval = TimeSpan.FromHours(1);
+    private readonly TimeSpan _interval = TimeSpan.FromMinutes(2);
 
     public RefreshTokenCleanupTask(
         ILogger<RefreshTokenCleanupTask> logger,

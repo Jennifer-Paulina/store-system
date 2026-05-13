@@ -12,7 +12,8 @@ export class OrderTasks {
     private readonly prismaWrite: PrismaWriteService,
   ) {}
 
-  @Cron('0 0 * * * *') // Cada hora
+  @Cron('0 */5 * * * *') // Cada 5 minutos
+  //@Cron('0 0 * * * *') // Cada hora
   //@Cron('0 * * * * *') // Cada 1 minuto
   async cleanAbandonedOrders(): Promise<void> {
     this.logger.log('Iniciando limpieza de pedidos abandonados...');
