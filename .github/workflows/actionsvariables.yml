@@ -34,6 +34,14 @@ jobs:
           echo "Tipo de ejecucion: $TipoEjecucion"
           echo $mensaje
 
+      - name: Crear Variable
+        run: echo "framework=NET10" >> $GITHUB_ENV
+
+      - name: Usar Variable creada
+        run: |
+          echo "Framework creado: $framework"
+          echo "Rama de liberacion: ${{ github.ref }}"
+          
       - name: Revision de código
         uses: actions/checkout@v4
 
