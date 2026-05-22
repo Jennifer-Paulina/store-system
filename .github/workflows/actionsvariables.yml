@@ -1,0 +1,62 @@
+name: StoreSystem_Workflow
+
+on:
+  push:
+    branches:
+      - features/variables-en-yml
+  pull_request:
+    branches:
+      - master
+
+env:
+  App_name: 'StoreSystem'
+  Dotnet_Version: '10'
+  Node_Version: '22'
+  Postgres_Version: '16'
+  SqlServer_Version: '2022'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      TipoEjecucion: 'Validacion de variables'
+
+    steps:
+      - name: Mostrar variables globales
+        env:
+          mensaje: Iniciando validación de variables del proyecto StoreSystem
+        run: |
+          echo "Aplicacion: $App_name"
+          echo "Version de .NET: $Dotnet_Version"
+          echo "Version de Node: $Node_Version"
+          echo "Version de PostgreSQL: $Postgres_Version"
+          echo "Version de SQL Server: $SqlServer_Version"
+          echo "Tipo de ejecucion: $TipoEjecucion"
+          echo $mensaje
+
+      - name: Revision de código
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restaurar dependencias AuthAPI
+        run: dotnet restore ./AuthAPI/AuthAPI.sln
+
+      - name: Compilar AuthAPI
+        run: dotnet build ./AuthAPI/AuthAPI.sln --configuration Release --no-restore
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Instalar dependencias StoreAPI
+        run: npm ci
+        working-directory: ./store-api
+
+      - name: Compilar StoreAPI
+        run: npm run build
+        working-directory: ./store-api
