@@ -15,13 +15,13 @@ services:
     volumes:
       - sql-server-data:/var/opt/mssql
     networks:
-      store-network:
-        ipv4_address: 172.20.0.2
+      - store-network
     healthcheck:
       test: ["CMD", "/opt/mssql-tools18/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "${SQL_SERVER_PASSWORD}", "-C", "-Q", "SELECT 1"]
       interval: 10s
       timeout: 5s
       retries: 10
+      start_period: 30s
 
   # ─── PostgreSQL Write ─────────────────────────────────────────
   postgres-write:
@@ -31,7 +31,6 @@ services:
       POSTGRES_USER: "${POSTGRES_USER}"
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
       POSTGRES_DB: storedb
-      POSTGRES_INITDB_ARGS: "--auth-host=md5"
     ports:
       - "5432:5432"
     volumes:
@@ -42,8 +41,7 @@ services:
       - ./pg_hba.conf:/etc/postgresql/pg_hba.conf
     command: postgres -c config_file=/etc/postgresql/postgresql.conf -c hba_file=/etc/postgresql/pg_hba.conf
     networks:
-      store-network:
-        ipv4_address: 172.20.0.3
+      - store-network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d storedb"]
       interval: 10s
@@ -78,8 +76,7 @@ services:
       postgres-write:
         condition: service_healthy
     networks:
-      store-network:
-        ipv4_address: 172.20.0.4
+      - store-network
 
   # ─── AuthAPI ──────────────────────────────────────────────────
   auth-api:
@@ -101,8 +98,7 @@ services:
       sql-server:
         condition: service_healthy
     networks:
-      store-network:
-        ipv4_address: 172.20.0.5
+      - store-network
 
   # ─── StoreAPI ─────────────────────────────────────────────────
   store-api:
@@ -127,8 +123,7 @@ services:
       auth-api:
         condition: service_started
     networks:
-      store-network:
-        ipv4_address: 172.20.0.6
+      - store-network
 
   # ─── Frontend ─────────────────────────────────────────────────
   store-frontend:
@@ -142,16 +137,12 @@ services:
       - auth-api
       - store-api
     networks:
-      store-network:
-        ipv4_address: 172.20.0.7
+      - store-network
 
 # ─── Redes ────────────────────────────────────────────────────
 networks:
   store-network:
     driver: bridge
-    ipam:
-      config:
-        - subnet: 172.20.0.0/16
 
 # ─── Volúmenes ────────────────────────────────────────────────
 volumes:
