@@ -9,7 +9,6 @@ AuthAPI/AuthAPI.Tests/bin/
 AuthAPI/AuthAPI.Tests/obj/
 
 # Variables de entorno
-AuthAPI/appsettings.json
 AuthAPI/appsettings.Development.json
 
 # Angular cache
