@@ -40,6 +40,19 @@ jobs:
         run: npm ci
         working-directory: ./store-api
 
+       - name: Esperar a PostgreSQL
+        run: |
+          until pg_isready -h localhost -p 5432 -U postgres; do
+            echo "Esperando a PostgreSQL..."
+            sleep 2
+          done
+
+      - name: Ejecutar migraciones
+        run: npx prisma migrate deploy
+        working-directory: ./store-api
+        env:
+          DATABASE_URL: "postgresql://postgres:testpassword@localhost:5432/storedb_test"
+
       - name: Ejecutar pruebas e2e StoreAPI
         run: npm run test:e2e
         working-directory: ./store-api
