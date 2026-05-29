@@ -1,12 +1,7 @@
-name: StoreSystem_Workflow
+name: StoreSystem_Variables
 
 on:
-  push:
-    branches:
-      - features/variables-en-yml
-  pull_request:
-    branches:
-      - master
+  workflow_call:
 
 env:
   App_name: 'StoreSystem'
@@ -22,6 +17,9 @@ jobs:
       TipoEjecucion: 'Validacion de variables'
 
     steps:
+      - name: Ejecutar checkout
+        uses: actions/checkout@v4
+
       - name: Mostrar variables globales
         env:
           mensaje: Iniciando validación de variables del proyecto StoreSystem
@@ -41,30 +39,25 @@ jobs:
         run: |
           echo "Framework creado: $framework"
           echo "Rama de liberacion: ${{ github.ref }}"
-          
-      - name: Revision de código
-        uses: actions/checkout@v4
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '10.0.x'
+      - name: Variables del repositorio
+        run: |
+          echo "${{ vars.PROYECT_DESCRIPTION }}"
+          echo "$GITHUB_WORKSPACE"
 
-      - name: Restaurar dependencias AuthAPI
-        run: dotnet restore ./AuthAPI/AuthAPI.sln
+      - name: Leer y modificar appsettings.json
+        shell: pwsh
+        run: |
+          $path = "$env:GITHUB_WORKSPACE/AuthAPI/appsettings.json"
+          $json = Get-Content $path -Raw | ConvertFrom-Json
 
-      - name: Compilar AuthAPI
-        run: dotnet build ./AuthAPI/AuthAPI.sln --configuration Release --no-restore
+          echo "Antes del cambio:"
+          echo ($json | ConvertTo-Json -Depth 10)
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
+          $json.ConnectionStrings.WriteConnection = "Server=sql-server,1433;Database=AuthDB;User Id=sa;Password=WORKFLOW_TEST;TrustServerCertificate=True;"
+          $json.ConnectionStrings.ReadConnection = "Server=sql-server,1433;Database=AuthDB;User Id=sa;Password=WORKFLOW_TEST;TrustServerCertificate=True;"
 
-      - name: Instalar dependencias StoreAPI
-        run: npm ci
-        working-directory: ./store-api
+          $json | ConvertTo-Json -Depth 10 | Set-Content $path
 
-      - name: Compilar StoreAPI
-        run: npm run build
-        working-directory: ./store-api
+          echo "Despues del cambio:"
+          echo ($json | ConvertTo-Json -Depth 10)

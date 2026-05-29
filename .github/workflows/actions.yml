@@ -1,0 +1,44 @@
+name: StoreSystem_Workflow
+
+on:
+  push:
+    branches:
+      - features/workflow-reusable
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  call_env:
+    uses: ./.github/workflows/actionsvariables.yml
+
+  build:
+    runs-on: ubuntu-latest
+    needs: call_env
+    steps:
+      - name: Revision de código
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restaurar dependencias AuthAPI
+        run: dotnet restore ./AuthAPI/AuthAPI.sln
+
+      - name: Compilar AuthAPI
+        run: dotnet build ./AuthAPI/AuthAPI.sln --configuration Release --no-restore
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Instalar dependencias StoreAPI
+        run: npm ci
+        working-directory: ./store-api
+
+      - name: Compilar StoreAPI
+        run: npm run build
+        working-directory: ./store-api
