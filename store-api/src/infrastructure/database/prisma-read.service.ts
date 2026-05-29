@@ -16,14 +16,18 @@ export class PrismaReadService extends PrismaClient implements OnModuleInit, OnM
   }
 
   async onModuleInit() {
-    try {
-      await this.$connect();
+  try {
+    await this.$connect();
+    this.isAvailable = true;
+  } catch {
+    if (process.env.NODE_ENV === 'test') {
       this.isAvailable = true;
-    } catch {
+    } else {
       this.isAvailable = false;
-      console.warn('Réplica de lectura no disponible. Los endpoints de lectura retornarán error 503.');
+      console.warn('Réplica de lectura no disponible.');
     }
   }
+}
 
   async onModuleDestroy() {
     await this.$disconnect();
