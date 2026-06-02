@@ -1,0 +1,16 @@
+name: StoreSystem_Docker_StoreAPI
+
+on:
+  push:
+    branches:
+      - features/docker-workflow
+
+jobs:
+  build:
+    uses: ./.github/workflows/docker-reusable.yml
+    with:
+      image_name: store-api
+      context: ./store-api
+      dockerfile: ./store-api/Dockerfile
+    secrets:
+      GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
