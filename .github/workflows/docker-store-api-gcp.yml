@@ -1,0 +1,16 @@
+name: StoreSystem_Docker_StoreAPI_GCP
+
+on:
+  push:
+    branches:
+      - features/google-cloud
+
+jobs:
+  build:
+    uses: ./.github/workflows/docker-reusable-gcp.yml
+    with:
+      image_name: store-api
+      context: ./store-api
+      dockerfile: ./store-api/Dockerfile
+    secrets:
+      GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
