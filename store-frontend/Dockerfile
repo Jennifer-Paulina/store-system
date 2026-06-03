@@ -8,4 +8,4 @@ RUN npm run build
 FROM nginx:alpine AS final
 COPY --from=build /app/dist/store-frontend/browser /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
-EXPOSE 80
+EXPOSE 8080
