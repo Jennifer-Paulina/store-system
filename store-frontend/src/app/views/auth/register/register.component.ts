@@ -90,9 +90,10 @@ export class RegisterComponent {
             this.authService.logout();
             this.router.navigate(['/login']);
           },
-          error: () => {
+          error: (err: any) => {
             this.loading = false;
-            this.snackBar.open('Registro exitoso. Tu cuenta está pendiente de aprobación.', 'Cerrar', { duration: 5000 });
+            const msg = err?.error?.message || 'El registro fue exitoso pero no se pudo crear tu perfil. Contacta al administrador.';
+            this.snackBar.open(msg, 'Cerrar', { duration: 6000 });
             this.authService.logout();
             this.router.navigate(['/login']);
           }

@@ -12,6 +12,7 @@ import { ProductService } from '../../../core/services/product.service';
 import { InventoryService } from '../../../core/services/inventory.service';
 import { OrderStatus } from '../../../models/order.model';
 import { Customer, CustomerStatus } from '../../../models/customer.model';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-dashboard',
@@ -22,6 +23,7 @@ import { Customer, CustomerStatus } from '../../../models/customer.model';
     MatIconModule,
     MatButtonModule,
     MatProgressSpinnerModule,
+    MatSnackBarModule,
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
@@ -57,6 +59,7 @@ export class DashboardComponent implements OnInit {
     private productService: ProductService,
     private inventoryService: InventoryService,
     private router: Router,
+    private snackBar: MatSnackBar,
   ) {
     this.user = this.authService.getUser();
     this.role = this.user?.role;
@@ -121,6 +124,7 @@ export class DashboardComponent implements OnInit {
       },
       error: () => {
         this.loading = false;
+        this.snackBar.open('No se encontró tu perfil de cliente. Contacta al administrador.', 'Cerrar', { duration: 6000 });
       }
     });
   }

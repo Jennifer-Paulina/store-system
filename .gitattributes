@@ -1,0 +1,20 @@
+# Normalizar líneas por defecto
+* text=auto
+
+# Forzar LF en scripts de shell y archivos de Docker
+*.sh text eol=lf
+*.bash text eol=lf
+Dockerfile text eol=lf
+*.Dockerfile text eol=lf
+docker-compose*.yml text eol=lf
+
+# Forzar LF en archivos de configuración de bases de datos
+*.sql text eol=lf
+*.conf text eol=lf
+
+# Mantener binarios sin conversión
+*.png binary
+*.jpg binary
+*.gif binary
+*.ico binary
+*.pdf binary
