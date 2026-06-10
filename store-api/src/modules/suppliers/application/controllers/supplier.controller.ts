@@ -1,9 +1,11 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, ParseIntPipe, UseGuards } from '@nestjs/common';
 import { SupplierLogic } from '../logic/supplier.logic';
 import { SupplierPresenter } from '../presenters/supplier.presenter';
 import { CreateSupplierDto } from '../../domain/dtos/create-supplier.dto';
 import { UpdateSupplierDto } from '../../domain/dtos/update-supplier.dto';
+import { JwtAuthGuard } from '../../../../shared/guards/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('suppliers')
 export class SupplierController {
   constructor(private readonly supplierLogic: SupplierLogic) {}

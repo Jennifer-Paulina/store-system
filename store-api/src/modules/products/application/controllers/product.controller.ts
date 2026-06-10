@@ -1,10 +1,12 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, ParseIntPipe, Query } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, ParseIntPipe, Query, UseGuards } from '@nestjs/common';
 import { ProductLogic } from '../logic/product.logic';
 import { ProductPresenter } from '../presenters/product.presenter';
 import { CreateProductDto } from '../../domain/dtos/create-product.dto';
 import { UpdateProductDto } from '../../domain/dtos/update-product.dto';
 import { CreateVariantDto } from '../../domain/dtos/create-variant.dto';
+import { JwtAuthGuard } from '../../../../shared/guards/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('products')
 export class ProductController {
   constructor(private readonly productLogic: ProductLogic) {}

@@ -1,9 +1,11 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, ParseIntPipe, UseGuards } from '@nestjs/common';
 import { CategoryLogic } from '../logic/category.logic';
 import { CategoryPresenter } from '../presenters/category.presenter';
 import { CreateCategoryDto } from '../../domain/dtos/create-category.dto';
 import { UpdateCategoryDto } from '../../domain/dtos/update-category.dto';
+import { JwtAuthGuard } from '../../../../shared/guards/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('categories')
 export class CategoryController {
   constructor(private readonly categoryLogic: CategoryLogic) {}

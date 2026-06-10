@@ -2,6 +2,7 @@ services:
 
   # ─── SQL Server ───────────────────────────────────────────────
   sql-server:
+    restart: unless-stopped
     build:
       context: .
       dockerfile: sqlserver.Dockerfile
@@ -18,13 +19,14 @@ services:
       - store-network
     healthcheck:
       test: ["CMD", "/opt/mssql-tools18/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "${SQL_SERVER_PASSWORD}", "-C", "-Q", "SELECT 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 30s
+      interval: 15s
+      timeout: 10s
+      retries: 15
+      start_period: 60s
 
   # ─── PostgreSQL Write ─────────────────────────────────────────
   postgres-write:
+    restart: unless-stopped
     image: postgres:16
     container_name: postgres-write
     environment:
@@ -50,6 +52,7 @@ services:
 
   # ─── PostgreSQL Read (Réplica) ────────────────────────────────
   postgres-read:
+    restart: unless-stopped
     image: postgres:16
     container_name: postgres-read
     user: postgres
@@ -80,6 +83,7 @@ services:
 
   # ─── AuthAPI ──────────────────────────────────────────────────
   auth-api:
+    restart: unless-stopped
     build:
       context: .
       dockerfile: AuthAPI/Dockerfile
@@ -96,12 +100,13 @@ services:
       - "5163:5163"
     depends_on:
       sql-server:
-        condition: service_healthy
+        condition: service_started
     networks:
       - store-network
 
   # ─── StoreAPI ─────────────────────────────────────────────────
   store-api:
+    restart: unless-stopped
     build:
       context: ./store-api
       dockerfile: Dockerfile
@@ -127,6 +132,7 @@ services:
 
   # ─── Frontend ─────────────────────────────────────────────────
   store-frontend:
+    restart: unless-stopped
     build:
       context: ./store-frontend
       dockerfile: Dockerfile

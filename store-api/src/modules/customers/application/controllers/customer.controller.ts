@@ -1,9 +1,11 @@
-import { Controller, Get, Post, Put, Delete, Patch, Param, Body, ParseIntPipe, Inject } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Patch, Param, Body, ParseIntPipe, UseGuards, Inject } from '@nestjs/common';
 import { CustomerLogic } from '../logic/customer.logic';
 import { CustomerPresenter } from '../presenters/customer.presenter';
 import { CreateCustomerDto } from '../../domain/dtos/create-customer.dto';
 import { UpdateCustomerDto } from '../../domain/dtos/update-customer.dto';
+import { JwtAuthGuard } from '../../../../shared/guards/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('customers')
 export class CustomerController {
   constructor(private readonly customerLogic: CustomerLogic) {}

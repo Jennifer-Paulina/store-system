@@ -1,9 +1,11 @@
-import { Controller, Get, Post, Patch, Param, Body, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Param, Body, ParseIntPipe, UseGuards } from '@nestjs/common';
 import { InventoryLogic } from '../logic/inventory.logic';
 import { InventoryPresenter } from '../presenters/inventory.presenter';
 import { CreateInventoryDto } from '../../domain/dtos/create-inventory.dto';
 import { AdjustStockDto } from '../../domain/dtos/adjust-stock.dto';
+import { JwtAuthGuard } from '../../../../shared/guards/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('inventory')
 export class InventoryController {
   constructor(private readonly inventoryLogic: InventoryLogic) {}
