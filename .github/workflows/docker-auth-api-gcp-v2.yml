@@ -1,0 +1,14 @@
+name: StoreSystem_Docker_AuthAPI_GCP_V2
+on:
+  push:
+    branches:
+      - features/google-cloud-v2
+jobs:
+  build:
+    uses: ./.github/workflows/docker-reusable-gcp-v2.yml
+    with:
+      image_name: auth-api
+      context: .
+      dockerfile: ./AuthAPI/Dockerfile
+    secrets:
+      GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}

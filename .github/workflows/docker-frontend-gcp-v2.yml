@@ -1,0 +1,14 @@
+name: StoreSystem_Docker_Frontend_GCP_V2
+on:
+  push:
+    branches:
+      - features/google-cloud-v2
+jobs:
+  build:
+    uses: ./.github/workflows/docker-reusable-gcp-v2.yml
+    with:
+      image_name: store-frontend
+      context: ./store-frontend
+      dockerfile: ./store-frontend/Dockerfile
+    secrets:
+      GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
