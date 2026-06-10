@@ -1,0 +1,14 @@
+name: StoreSystem_Docker_StoreAPI_V2
+on:
+  push:
+    branches:
+      - features/docker-workflow-v2
+jobs:
+  build:
+    uses: ./.github/workflows/docker-reusable-v2.yml
+    with:
+      image_name: store-api
+      context: ./store-api
+      dockerfile: ./store-api/Dockerfile
+    secrets:
+      GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
